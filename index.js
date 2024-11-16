@@ -9,6 +9,7 @@ const cors = require('cors')
 
 
 
+
 app.use(cors())
 app.use(express.json())
 
@@ -69,7 +70,43 @@ app.post('/bookings', async (req, res)=>{
    
 })
 
+app.get('/bookings', async(req, res)=>{
+  console.log(req.query)
+  let query ={}
+  if(req.query?.email){
+    query = {email: req.query.email}
+  }
+   const result = await bookingCollaction.find().toArray()
+   res.send(result)
 
+})
+
+app.delete('/bookings/:id', async(req, res)=>{
+     const id = req.params.id
+     const quary ={_id: new ObjectId(id)}
+     const result = await bookingCollaction.deleteOne(quary)
+     res.send(result)
+})
+
+//update section
+
+app.patch('/bookings/:id', async(req, res)=>{
+     
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)}
+
+  const booking = req.body;
+  const updateDoc = {
+    $set: {
+      status: booking.status
+    },
+  };
+
+  const result = await bookingCollaction.updateOne(filter, updateDoc)
+  res.send(result)
+   
+   console.log(booking)
+})
 
 
     // Send a ping to confirm a successful connection
